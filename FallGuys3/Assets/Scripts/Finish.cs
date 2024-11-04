@@ -25,16 +25,11 @@ public class Finish : MonoBehaviour
     {
         if (other.CompareTag("Player") && other.GetComponentInParent<PlayerSetup>().passed == false && isRace == true)
         {
-            if(passed == 0) other.GetComponentInParent<PhotonView>().RPC("AddScore", RpcTarget.All, 30);
-            else if (passed == 1) other.GetComponentInParent<PhotonView>().RPC("AddScore", RpcTarget.All, 20);
-            else if (passed == 2) other.GetComponentInParent<PhotonView>().RPC("AddScore", RpcTarget.All, 10);
-            else if (passed == 3) other.GetComponentInParent<PhotonView>().RPC("AddScore", RpcTarget.All, 5);
+            if(passed == 0) other.GetComponentInParent<PlayerSetup>().GetComponent<PhotonView>().RPC("AddScore", RpcTarget.All, 30);
+           
             passed++;
             other.GetComponentInParent<PlayerSetup>().passed = false;
-            if(PhotonNetwork.PlayerList.Length == passed)
-            {
-                End();
-            }
+            End();
         }
     }
     private void End()

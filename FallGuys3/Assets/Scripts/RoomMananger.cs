@@ -20,7 +20,7 @@ public class RoomMananger : MonoBehaviourPunCallbacks
     [SerializeField] TextMeshPro playerNick;
     [SerializeField] GameObject finalPanel;
     [SerializeField] TextMeshPro firstPlace;
-    
+    [SerializeField] GameObject masterWarning;
     public PlayerSetup[] players ; 
     public int playersCount;
     public int cycles = 1;
@@ -67,7 +67,7 @@ public class RoomMananger : MonoBehaviourPunCallbacks
         
         base.OnJoinedRoom();
         RespawnPlayer(spp[Random.Range(0, spp.Length)].position);
-      
+        if(PhotonNetwork.IsMasterClient) masterWarning.SetActive(true);
         loadingScreen.SetActive(false);
        
     }

@@ -20,7 +20,8 @@ public class PlayerHealth : MonoBehaviour
         if (col.CompareTag("Hammer") && isLocal == true)
         {
             print("yes");
-            
+            controller.isPunching = false;
+            controller.canPunch = true;
             playerparent.transform.position = checkPoint;
             playerparent.GetComponent<PlayerSetup>().RessetPlayer();
 

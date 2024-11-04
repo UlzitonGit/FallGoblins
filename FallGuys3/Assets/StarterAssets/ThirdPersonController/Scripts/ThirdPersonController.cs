@@ -110,12 +110,13 @@ namespace StarterAssets
         private CharacterController _controller;
         private StarterAssetsInputs _input;
         [SerializeField] GameObject _mainCamera;
+        [SerializeField] GameObject hitZone;
         private Rigidbody rb;
         public Vector3 checkPoint;
         private const float _threshold = 0.01f;
-        bool canPunch = true;
+        public bool canPunch = true;
         private bool _hasAnimator;
-
+        public bool isPunching = false;
         private bool IsCurrentDeviceMouse
         {
             get
@@ -158,7 +159,7 @@ namespace StarterAssets
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
-
+            if (isPunching == true) return;
             JumpAndGravity();
             GroundedCheck();
             Move();
@@ -181,6 +182,16 @@ namespace StarterAssets
         {
             _animator.SetTrigger("Punch");
             canPunch = false;
+            _controller.enabled = false;
+            rb.isKinematic = false;
+            rb.AddForce(gameObject.transform.forward * punchpower, ForceMode.Impulse);
+            hitZone.SetActive(true);
+            isPunching = true;
+            yield return new WaitForSeconds(0.3f);
+            isPunching = false;
+            hitZone.SetActive(false);
+            rb.isKinematic = true;
+            _controller.enabled = true;
             yield return new WaitForSeconds(2);
             canPunch = true;
         }
@@ -373,8 +384,10 @@ namespace StarterAssets
                 _verticalVelocity -= Gravity * Time.deltaTime;
             }
         }
+        [PunRPC]
         public void GetPunch(Vector3 vector)
         {
+            if (isPunching == true) return;
             StartCoroutine(Boost(vector));
         }
         IEnumerator Boost(Vector3 vector)
@@ -382,7 +395,9 @@ namespace StarterAssets
             _controller.enabled = false;
             rb.isKinematic = false;
             rb.AddForce(vector * punchpower, ForceMode.Impulse);
-            yield return new WaitForSeconds(1f);
+            isPunching = true;
+            yield return new WaitForSeconds(0.4f);
+            isPunching = false;
             rb.isKinematic = true;
             _controller.enabled = true;
         }
@@ -436,7 +451,8 @@ namespace StarterAssets
            
 
         }
-      
+       
+
         private void OnTriggerExit(Collider other)
         {
             if (other.CompareTag("Wind"))
